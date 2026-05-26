@@ -20,6 +20,7 @@ private:
   Motion* motion;
 
   bool invert = false;
+  int gain = 2;
 
   bool pitch_down();
   bool pitch_up();

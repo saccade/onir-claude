@@ -50,17 +50,19 @@ bool Trimmer::read_dial() {
 }
 
 bool Trimmer::pitch_down() {
-  if (motion->pitch == (-1 << 7) + 1) {  // -127
+  Serial.println("Trimmer::pitch_down");
+  if (motion->pitch <= (-1 << 7) + gain) {  // -127
     return false;
   }
-  motion->pitch--;
+  motion->pitch -= gain;
   return true;
 }
 
 bool Trimmer::pitch_up() {
-  if (motion->pitch == (1 << 7) - 1) {  // 127
+  Serial.println("Trimmer::pitch_up");
+  if (motion->pitch >= (1 << 7) - gain) {  // 127
     return false;
   }
-  motion->pitch++;
+  motion->pitch += gain;
   return true;
 }
