@@ -24,6 +24,35 @@ void uno_io(Hardware hardware) {
   assign(hardware, Fn::switch_, 15);  // A1
 }
 
+void uno_audio(Hardware hardware) {
+
+  clear(hardware);
+
+  // digit display
+  assign(hardware, Fn::dd_a, 6);
+  assign(hardware, Fn::dd_b, 2);
+  assign(hardware, Fn::dd_c, 17);
+  assign(hardware, Fn::dd_d, 15);
+  assign(hardware, Fn::dd_e, 14);
+  assign(hardware, Fn::dd_f, 5);
+  assign(hardware, Fn::dd_g, 18);
+  assign(hardware, Fn::dd_p, 16);
+  assign(hardware, Fn::dd_1, 7);
+  assign(hardware, Fn::dd_2, 4);
+  assign(hardware, Fn::dd_3, 3);
+  assign(hardware, Fn::dd_4, 19);
+
+  // dial encoder
+  assign(hardware, Fn::clock, 8);   // A3
+  assign(hardware, Fn::data, 9);    // A2
+  assign(hardware, Fn::switch_, 10);  // A1
+
+  Hardware local {hardware};
+  assign(local, Fn::ground, 12);
+  power(local);
+
+}
+
 void uno_car(Hardware hardware) {
 
   clear(hardware);
