@@ -63,7 +63,11 @@ enum class Function : u_small {
   dd_3,
   dd_4,
 
-  count,  // last iteml used for size
+  // sonar
+  trigger,
+  echo,
+
+  count,  // last item used for size
 
 };
 
@@ -89,6 +93,7 @@ extern const Hardware no_hardware;
 extern const int hardware_size;
 
 int dispatch(const Hardware& hardware, Function fn);
+int dispatch(const Hardware& hardware, Function fn, int mode);
 
 inline bool const is_unset(const Hardware& hardware, Function fn) {
   return is_unset(dispatch(hardware,fn));
@@ -99,6 +104,8 @@ inline bool const is_set(const Hardware& hardware, Function fn) {
 }
 
 int assign(Hardware hardware, Function fn, int pin);
+int assign(Hardware hardware, Function fn, int pin, int mode);
+
 bool empty(const Hardware& hardware);
 void clear(Hardware hardware);
 void power(const Hardware&);
