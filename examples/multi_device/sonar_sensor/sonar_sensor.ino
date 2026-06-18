@@ -8,7 +8,7 @@ const int PIN_TRIGGER  = A4;
 const int PIN_ECHO     = A5;
 
 const int PIN_SWITCH   = A1;
-const int PIN_ECHO_LED = LED_BUILTIN;
+//const int PIN_ECHO_LED = LED_BUILTIN;
 
 // record program state
 bool echo_state = false;
@@ -16,7 +16,7 @@ long echo_on_micros;
 
 void update_pin_copies() {
   digitalWrite(dispatch(hardware, Function::trigger), digitalRead(PIN_SWITCH));
-  digitalWrite(PIN_ECHO_LED, digitalRead((dispatch(hardware, Function::echo))));
+//  digitalWrite(PIN_ECHO_LED, digitalRead((dispatch(hardware, Function::echo))));
 }
 
 void setup() {
@@ -24,12 +24,12 @@ void setup() {
   uno_io(hardware);
   display = new Display(hardware);
   display->set_point(2);
-  
+
   assign(hardware, Fn::trigger, PIN_ECHO, OUTPUT);
   assign(hardware, Fn::echo, PIN_TRIGGER, INPUT);
 
   pinMode(PIN_SWITCH, INPUT);
-  pinMode(PIN_ECHO_LED, OUTPUT);
+//  pinMode(PIN_ECHO_LED, OUTPUT);
 
 
   Serial.println("program start.");

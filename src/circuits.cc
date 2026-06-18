@@ -43,9 +43,9 @@ void uno_audio(Hardware hardware) {
   assign(hardware, Fn::dd_4, 19);
 
   // dial encoder
-  assign(hardware, Fn::clock, 8);   // A3
-  assign(hardware, Fn::data, 9);    // A2
-  assign(hardware, Fn::switch_, 10);  // A1
+  assign(hardware, Fn::clock, 8);
+  assign(hardware, Fn::data, 9);
+  assign(hardware, Fn::switch_, 10);
 
   Hardware local {hardware};
   assign(local, Fn::ground, 12);
