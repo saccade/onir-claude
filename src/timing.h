@@ -62,7 +62,7 @@ inline unsigned long since(const Rhythm& rhythm) {
   return (unsigned long)rhythm.now - (unsigned long)rhythm.last;  // safe across rollover
 }
 
-inline long wait(const Rhythm& rhythm) {
+inline unsigned long wait(const Rhythm& rhythm) {
   return steady(rhythm) ? rhythm.value : rhythm.layoff;
 }
 
