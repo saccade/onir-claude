@@ -14,6 +14,9 @@ public:
 private:
   bool clock = true;  // this pin is HIGH by default
 
+  void listen(Function fn);  // pull up a pin so we can hear the dial
+  bool rising();             // clock just went high?
+
   bool clock_pin() const;
   bool data_pin() const;
   bool switch_pressed() const;
