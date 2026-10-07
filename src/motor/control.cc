@@ -134,6 +134,6 @@ bool Control::update() {
   for (Function fn = Function::motor_main; fn < Function::motor_end; fn++) {
     updated = update_link(panel[fn]) or updated;
   }
-  return updated;
   readout->refresh();
+  return updated;
 }
