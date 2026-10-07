@@ -22,11 +22,11 @@ void on_receive(int n_bytes) {
     Serial.println("Format error!");
     n = (int)sizeof(Message);
   }
-  Wire.readBytes((byte*)&io->buffer.display, n);
+  Wire.readBytes((byte*)&io->buffer.message, n);
 }
 
 void on_request() {
-  Wire.write((byte*)&io->buffer.dial, sizeof(Reading));
+  Wire.write((byte*)&io->buffer.reading, sizeof(Reading));
 }
 
 void nothing() {}
@@ -41,7 +41,7 @@ void restart(bool button = false) {
   Wire.onReceive(nothing);
   Wire.onRequest(nothing);
   Wire.end();
-  blank(&io->buffer.display);
+  io->buffer.message.clear();
   channel = Selector(button, hardware).get_channel();
   Serial.print("selected: ");
   Serial.println(channel);
