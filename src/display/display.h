@@ -16,7 +16,7 @@ public:
   Display(int ch);
 
   static int call(Change& change);
-  int Display::call();
+  int call();
 
   void init(int channel);
 

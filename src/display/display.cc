@@ -20,12 +20,11 @@ Display::Display(int channel) {
   clear();
 }
 
-static int Display::call(Change& change) {
+int Display::call(Change& change) {
   if (change.channel < min_channel) return 0;
   Wire.beginTransmission(change.channel);
   Wire.write(change.buffer, change.to_write);
-  Wire.endTransmission();
-  return 1;
+  return Wire.endTransmission() == 0;  // 0: the device took it
 }
 
 int Display::call() {
@@ -45,6 +44,6 @@ String chars(Message message) {
   for (int i = 0; i < 4; i++) {
     result[i] = (char)message.chars[i];
   }
-  result[5] = 0;
+  result[4] = 0;
   return String(result);
 }
