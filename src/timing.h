@@ -33,10 +33,7 @@ inline int entrance(const Rhythm& rhythm) {
 }
 
 inline int stick(const Rhythm& rhythm) {
-  if (rhythm.now == UNSET) {  // (is_unset() takes an int; this is a long)
-    return UNSET;
-  }
-  return (unsigned long)rhythm.now % rhythm.beats;  // the clock rolls over; the beat doesn't
+  return rhythm.now % rhythm.beats;
 }
 
 inline bool on_beat(const Rhythm& rhythm) {
@@ -51,11 +48,11 @@ inline bool steady(const Rhythm& rhythm) {
   return rhythm.missed <= rhythm.calls;
 }
 
-inline unsigned long since(const Rhythm& rhythm) {
-  return (unsigned long)rhythm.now - (unsigned long)rhythm.last;  // safe across rollover
+inline long since(const Rhythm& rhythm) {
+  return rhythm.now - rhythm.last;
 }
 
-inline unsigned long wait(const Rhythm& rhythm) {
+inline long wait(const Rhythm& rhythm) {
   return steady(rhythm) ? rhythm.value : rhythm.layoff;
 }
 
@@ -63,19 +60,15 @@ inline bool on_cue(const Rhythm& rhythm) {
   return since(rhythm) >= wait(rhythm);
 }
 
-inline bool late(const Rhythm& rhythm) {  // slept through our entrance? come in anyway.
-  return since(rhythm) >= wait(rhythm) + rhythm.beats;
-}
-
 inline bool go(const Rhythm& rhythm) {
-  return on_cue(rhythm) and (on_beat(rhythm) or late(rhythm));
+  return on_cue(rhythm) and on_beat(rhythm);
 }
 
 inline void tally(Rhythm& rhythm, bool hit) {
   if (hit) {
     rhythm.missed = 0;
-  } else if (steady(rhythm)) {
-    rhythm.missed++;  // once we've laid off, stop counting
+  } else {
+    rhythm.missed++;
   }
 }
 

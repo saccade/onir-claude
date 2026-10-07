@@ -67,26 +67,16 @@ bool DialDevice::held() {
   return down;
 }
 
-// a request can land mid-copy; hand the whole reading over at once.
-static void hand_over(Reading& to, const Reading& from) {
-  noInterrupts();
-  to = from;
-  interrupts();
-}
-
 void DialDevice::take(Reading& reading) {
-  Reading next = reading;
   bool pressed = held();
 
   int step = turned();
   if (pressed) {
-    next.down_count += step;
+    reading.down_count += step;
   } else {
-    next.count += step;
+    reading.count += step;
   }
-  next.button = pressed;
-
-  hand_over(reading, next);
+  reading.button = pressed;
 }
 
 void DialDevice::set_clock(Function fn) {
