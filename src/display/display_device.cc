@@ -80,10 +80,6 @@ void DisplayDevice::blank() {
   }
 }
 
-int DisplayDevice::position_to_show() {
-  return (millis() % ms_per_cycle) / ms_per_digit;
-}
-
 void DisplayDevice::set_fn_pin(Function fn, bool val) {
   digitalWrite(dispatch(hardware, fn), val);
 }
@@ -100,20 +96,23 @@ void DisplayDevice::set_point_pin(bool val) {
   set_fn_pin(Fn::dd_p, val);
 }
 
+// light the next digit, once the last has had its millisecond.
+// taking turns, no digit is skipped however slow the loop.
 void DisplayDevice::refresh() {
+  unsigned long now = millis();
+  if (position != UNSET and now - shown_at < ms_per_digit) return;
+  shown_at = now;
+  position = (position + 1) % 4;
 
-  int prior_position = position;
-  if (prior_position != (position = position_to_show())) {  // redraw display
-    blank();
-    u_small shape = glyph(message.chars[position]);
-    for (int i = 0; i < 7; i++) {
-      if (shape & (1 << i)) {
-        pin_high(segments[i]);
-      }
+  blank();
+  u_small shape = glyph(message.chars[position]);
+  for (int i = 0; i < 7; i++) {
+    if (shape & (1 << i)) {
+      pin_high(segments[i]);
     }
-    if (message.point == position) {
-      set_point_pin(HIGH);
-    }
-    pin_low(positions[position]);
   }
+  if (message.point == position) {
+    set_point_pin(HIGH);
+  }
+  pin_low(positions[position]);
 }

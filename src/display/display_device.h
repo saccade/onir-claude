@@ -39,12 +39,10 @@ private:
       DDDDD   PP
   */
 
-  const int ms_per_digit = 1;
-  const int ms_per_cycle = 4 * ms_per_digit;
-  int position = UNSET;
-  long refresh_ms = UNSET;
+  const unsigned ms_per_digit = 1;
+  int position = UNSET;          // the digit lit now
+  unsigned long shown_at = 0;    // when it lit
 
-  int position_to_show();
   void set_fn_pin(Function fn, bool val);
 
   // TODO: rename to fn_high? fn_active? (anode/cathode aware)
