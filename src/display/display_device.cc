@@ -1,6 +1,7 @@
 #include "display_device.h"
 
 #include "Arduino.h"
+#include "rest.h"
 #include "Wire.h"
 
 DisplayDevice::DisplayDevice(const Hardware& hardware) : hardware(hardware) {
@@ -70,6 +71,13 @@ static u_small glyph(char ch) {
   return 0;  // anything else is blank.
 }
 
+bool showing(const Message& message) {
+  for (int i = 0; i < 4; i++) {
+    if (glyph(message.chars[i])) return true;
+  }
+  return message.point >= 0 and message.point < 4;
+}
+
 void DisplayDevice::blank() {
   for (Function segment : segments) {
     pin_low(segment);
@@ -103,6 +111,16 @@ void DisplayDevice::refresh() {
   if (position != UNSET and now - shown_at < ms_per_digit) return;
   shown_at = now;
   position = (position + 1) % 4;
+
+  if (spent()) {  // say goodbye
+    message.chars[0] = 'b';
+    message.chars[1] = 'o';
+    message.chars[2] = 'o';
+    message.chars[3] = 't';
+    message.point = UNSET;
+  }
+  if (showing(message)) stir();
+  doze();
 
   blank();
   u_small shape = glyph(message.chars[position]);

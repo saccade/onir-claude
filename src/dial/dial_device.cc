@@ -1,6 +1,7 @@
 #include "dial_device.h"
 
 #include "Arduino.h"
+#include "rest.h"
 
 DialDevice::DialDevice(const Hardware& hardware) : hardware(hardware) {
   if (not empty(hardware)) {
@@ -71,12 +72,14 @@ void DialDevice::take(Reading& reading) {
   bool pressed = held();
 
   int step = turned();
+  if (step or pressed != reading.button) stir();
   if (pressed) {
     reading.down_count += step;
   } else {
     reading.count += step;
   }
   reading.button = pressed;
+  doze();
 }
 
 void DialDevice::set_clock(Function fn) {

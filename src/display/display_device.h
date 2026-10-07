@@ -4,6 +4,8 @@
 
 using Fn = Function;
 
+bool showing(const Message& message);  // anything lit?
+
 // Runs a 7 segment common cathode clock display.
 class DisplayDevice {
 

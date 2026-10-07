@@ -2,6 +2,7 @@
 #include "dial_device.h"
 
 #include "util.h"
+#include "rest.h"
 
 #include "Wire.h"
 
@@ -36,11 +37,14 @@ int Dial::call() {
 }
 
 Reading& Dial::update() {
+  Reading was = reading;
   if (device) {
     device->take(reading);
   } else {
     follow(rhythm, call, change);
   }
+  if (reading != was) stir();
+  doze();
   return reading;
 }
 

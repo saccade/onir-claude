@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 #include "Servo.h"
+#include "rest.h"
 
 #define LOG_SERVO_CHANGE false
 
@@ -130,10 +131,19 @@ int Machine::advance(Function function) {
   return delta;
 }
 
+// a motor is moving if it hasn't reached its target, or it's a wheel that isn't stopped.
+static bool moving(const Joint* joint) {
+  if (not joint) return false;
+  if (joint->pulse_usec != joint->target_usec) return true;
+  return joint->target == Target::rotation and joint->pulse_usec != PULSE_NEUTRAL;
+}
+
 void Machine::advance() {
   for (Function fn = Function::motor_main; fn < Function::motor_end; fn++) {
     advance(fn);
+    if (moving(joints[fn])) stir();
   }
+  doze();
 }
 
 int Machine::slam(Function function) {

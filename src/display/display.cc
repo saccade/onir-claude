@@ -5,6 +5,7 @@
 #include "Wire.h"
 
 #include "display_device.h"
+#include "rest.h"
 
 Display::Display(const Hardware& hardware) {
   device = new DisplayDevice(hardware);
@@ -32,11 +33,17 @@ int Display::call() {
 }
 
 void Display::refresh() {
+  if (spent()) {  // say goodbye
+    put_str("boot");
+    clear_point();
+  }
+  if (showing(message)) stir();
   follow(rhythm, call, change);
   if (device) {
     device->update(message);
     device->refresh();
   }
+  doze();
 }
 
 String chars(Message message) {
