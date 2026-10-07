@@ -65,7 +65,6 @@ private:
   bool release_ready = false;
 
   DialDevice* device = nullptr;
-  const Hardware& hardware;
   Rhythm rhythm;
   Change change;
 };

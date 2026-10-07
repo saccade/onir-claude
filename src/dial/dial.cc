@@ -15,11 +15,11 @@ Dial::Dial(int channel) {
   set_channel(channel);
 }
 
-void Dial::attach(DialDevice* device) {
-  device = device;
+void Dial::attach(DialDevice* local) {
+  device = local;
 }
 
-static int Dial::call(Change& change) {
+int Dial::call(Change& change) {
   if (is_unset(change.channel)) return 0;
 
   Wire.requestFrom(change.channel, change.to_read);
@@ -66,7 +66,7 @@ bool Dial::release() {
   return false;
 }
 
-static u_small Dial::active_value(Reading reading) {
+u_small Dial::active_value(Reading reading) {
   if (reading.button) {
     return mod(256, reading.down_count);
   } else {
