@@ -2,16 +2,48 @@
 
 #include "Arduino.h"
 
+// drawers for the dials on this board, so a pin change can find them.
+static const int seats = 4;
+static DialDevice* dials[seats] = { };
+
+static void sit(DialDevice* dial) {
+  for (int i = 0; i < seats; i++) {
+    if (not dials[i]) {
+      dials[i] = dial;
+      return;
+    }
+  }
+}
+
+static void hear_all() {
+  for (int i = 0; i < seats; i++) {
+    if (dials[i]) dials[i]->feel();
+  }
+}
+
+ISR(PCINT0_vect) { hear_all(); }  // pins 8-13
+ISR(PCINT1_vect) { hear_all(); }  // A0-A5
+ISR(PCINT2_vect) { hear_all(); }  // pins 0-7
+
+// ask the chip to interrupt us when this pin changes.
+static void watch(int pin) {
+  volatile uint8_t* mask = digitalPinToPCMSK(pin);
+  if (not mask) return;  // not a pin-change pin; take() still polls it
+  *mask |= bit(digitalPinToPCMSKbit(pin));
+  PCICR |= bit(digitalPinToPCICRbit(pin));
+}
+
 DialDevice::DialDevice(const Hardware& hardware) : hardware(hardware) {
   if (not empty(hardware)) {
     listen(clock_fn);
     listen(data_fn);
     listen(switch_fn);
   }
+  sit(this);
 }
 
 void DialDevice::listen(Function fn) {
-  dispatch(hardware, fn, INPUT_PULLUP);
+  watch(dispatch(hardware, fn, INPUT_PULLUP));
 }
 
 bool DialDevice::clock_pin() const {
@@ -74,17 +106,25 @@ static void hand_over(Reading& to, const Reading& from) {
   interrupts();
 }
 
-void DialDevice::take(Reading& reading) {
-  Reading next = reading;
+void DialDevice::feel() {
   bool pressed = held();
-
   int step = turned();
   if (pressed) {
-    next.down_count += step;
+    moved_down += step;
   } else {
-    next.count += step;
+    moved += step;
   }
-  next.button = pressed;
+}
+
+void DialDevice::take(Reading& reading) {
+  noInterrupts();
+  feel();  // catch up on anything no interrupt told us about
+  Reading next = reading;
+  next.count += moved;
+  next.down_count += moved_down;
+  next.button = down;
+  moved = moved_down = 0;
+  interrupts();
 
   hand_over(reading, next);
 }
