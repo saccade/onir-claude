@@ -11,8 +11,6 @@ public:
   void set_data(Function fn);
   void set_switch(Function fn);
 
-  void feel();  // look at the pins and count; pin-change interrupts call this
-
 private:
   // policy
   unsigned settle = 5; // ms the switch must hold still before we believe it
@@ -24,11 +22,7 @@ private:
   unsigned long heard_at = 0;  // when it started saying it
   bool down = false;   // what we believe
 
-  // counted since the last take(); interrupts add, take() empties
-  volatile int notches = 0;
-  volatile int notches_down = 0;
-
-  void listen(Function fn);  // pull up a pin and ask to hear when it changes
+  void listen(Function fn);  // pull up a pin so we can hear the dial
   int turned();              // +1, -1 or 0, each time it falls into a detent
   bool held();               // the switch, once it stops chattering
 
