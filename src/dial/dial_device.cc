@@ -8,7 +8,6 @@ DialDevice::DialDevice(const Hardware& hardware) : hardware(hardware) {
     listen(data_fn);
     listen(switch_fn);
   }
-  clock = true;   // assume the recent past was boring.
 }
 
 void DialDevice::listen(Function fn) {
@@ -27,10 +26,45 @@ bool DialDevice::switch_pressed() const {
   return not digitalRead(dispatch(hardware, switch_fn));
 }
 
-bool DialDevice::rising() {
-  bool was = clock;
-  clock = clock_pin();
-  return clock and not was;
+// one quarter-step between two spots: +1 the turn-up way (clock leads),
+// -1 the other way, 0 for standing still or a jump we can't read.
+// a chattering contact flips back and forth, and its quarter-steps cancel.
+static int nudge(int from, int to) {
+  static const s_small steps[16] = {
+  //  to: 00  01  10  11
+          0, -1,  1,  0,   // from 00
+          1,  0,  0, -1,   // from 01
+         -1,  0,  0,  1,   // from 10
+          0,  1, -1,  0,   // from 11
+  };
+  return steps[from << 2 | to];
+}
+
+int DialDevice::turned() {
+  int was = spot;
+  spot = clock_pin() << 1 | data_pin();
+  travel += nudge(was, spot);
+
+  if (spot != rest) {
+    return 0;
+  }
+  int notch = 0;
+  if (travel > 1) notch = 1;     // most of the way round counts
+  if (travel < -1) notch = -1;
+  travel = 0;
+  return notch;
+}
+
+bool DialDevice::held() {
+  bool now = switch_pressed();
+  if (now != heard) {
+    heard = now;
+    heard_at = millis();
+  }
+  if (millis() - heard_at >= settle) {
+    down = heard;
+  }
+  return down;
 }
 
 // a request can land mid-copy; hand the whole reading over at once.
@@ -42,17 +76,15 @@ static void hand_over(Reading& to, const Reading& from) {
 
 void DialDevice::take(Reading& reading) {
   Reading next = reading;
-  bool down = switch_pressed();
+  bool pressed = held();
 
-  if (rising()) {
-    int step = data_pin() ? -1 : 1;
-    if (down) {
-      next.down_count += step;
-    } else {
-      next.count += step;
-    }
+  int step = turned();
+  if (pressed) {
+    next.down_count += step;
+  } else {
+    next.count += step;
   }
-  next.button = down;
+  next.button = pressed;
 
   hand_over(reading, next);
 }
