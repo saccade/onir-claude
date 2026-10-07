@@ -28,15 +28,18 @@ struct Rhythm {
 
 };
 
-static int entrance(const Rhythm& rhythm) {
+inline int entrance(const Rhythm& rhythm) {
   return rhythm.group % rhythm.beats;  // sign-preserving modulo
 }
 
-static int stick(const Rhythm& rhythm) {
-  return rhythm.now % rhythm.beats;
+inline int stick(const Rhythm& rhythm) {
+  if (rhythm.now == UNSET) {  // (is_unset() takes an int; this is a long)
+    return UNSET;
+  }
+  return (unsigned long)rhythm.now % rhythm.beats;  // the clock rolls over; the beat doesn't
 }
 
-static bool on_beat(const Rhythm& rhythm) {
+inline bool on_beat(const Rhythm& rhythm) {
   int beat = stick(rhythm);
   if (beat < 0) { // I can't tell you to go if you don't give me the time.
     return false;
@@ -44,25 +47,43 @@ static bool on_beat(const Rhythm& rhythm) {
   return entrance(rhythm) == beat;
 }
 
-static bool fresh(const Rhythm& rhythm) {
-  return rhythm.last < 0;
+inline bool fresh(const Rhythm& rhythm) {
+  return rhythm.last == UNSET;
 }
 
-static bool steady(const Rhythm& rhythm) {
+inline bool steady(const Rhythm& rhythm) {
   return rhythm.missed <= rhythm.calls;
 }
 
-static bool on_cue(const Rhythm& rhythm) {
+inline unsigned long since(const Rhythm& rhythm) {
   if (fresh(rhythm)) {
-    return true;
-  } else if (steady(rhythm)) {
-    return rhythm.now >= rhythm.last + rhythm.value;
+    return rhythm.now;
   }
-  return rhythm.now >= rhythm.last + rhythm.layoff;
+  return (unsigned long)rhythm.now - (unsigned long)rhythm.last;  // safe across rollover
 }
 
-static bool go(const Rhythm& rhythm) {
-  return on_cue(rhythm) and on_beat(rhythm);
+inline long wait(const Rhythm& rhythm) {
+  return steady(rhythm) ? rhythm.value : rhythm.layoff;
+}
+
+inline bool on_cue(const Rhythm& rhythm) {
+  return fresh(rhythm) or since(rhythm) >= wait(rhythm);
+}
+
+inline bool late(const Rhythm& rhythm) {  // slept through our entrance? come in anyway.
+  return since(rhythm) >= wait(rhythm) + rhythm.beats;
+}
+
+inline bool go(const Rhythm& rhythm) {
+  return on_cue(rhythm) and (on_beat(rhythm) or late(rhythm));
+}
+
+inline void tally(Rhythm& rhythm, bool hit) {
+  if (hit) {
+    rhythm.missed = 0;
+  } else if (steady(rhythm)) {
+    rhythm.missed++;  // once we've laid off, stop counting
+  }
 }
 
 void keep(Rhythm& rhythm);
@@ -71,37 +92,26 @@ using Move = int (*)();
 using Call = int (*)(Change& change);
 
 
-static int follow(Rhythm& rhythm, Call call, Change& change)  {
+inline int follow(Rhythm& rhythm, Call call, Change& change)  {
   keep(rhythm);
-  if (go(rhythm)) {
-    rhythm.last = rhythm.now;
-
-    int response = call(change);
-    if (response > 0) {
-      rhythm.missed = 0;
-    } else {
-      rhythm.missed++;
-    }
-
-    return response;
+  if (not go(rhythm)) {
+    return 0;
   }
-  return 0;
+  rhythm.last = rhythm.now;
+
+  int response = call(change);
+  tally(rhythm, response > 0);
+  return response;
 }
 
-static int follow(Rhythm& rhythm, Move move) {
+inline int follow(Rhythm& rhythm, Move move) {
   keep(rhythm);
-  if (go(rhythm)) {
-    rhythm.last = rhythm.now;
-
-    int result = move();
-    if (result) {
-      rhythm.missed = 0;
-    } else {
-      rhythm.missed++;
-    }
-
-    return result;
+  if (not go(rhythm)) {
+    return 0;
   }
+  rhythm.last = rhythm.now;
 
-  return 0;
+  int result = move();
+  tally(rhythm, result);
+  return result;
 }
