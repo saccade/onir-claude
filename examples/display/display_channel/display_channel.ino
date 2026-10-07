@@ -39,7 +39,7 @@ void clear() {
 }
 
 void update_display(int message_size) {
-  Wire.readBytes((byte*)&(device->message), message_size);
+  Wire.readBytes((byte*)&(device->message), min(message_size, (int)sizeof(Message)));
   recieved = true;
 }
 
@@ -68,6 +68,8 @@ void setup() {
   channel = Selector(&dial, &display).get_channel();
   Serial.print("selected: ");
   Serial.println(channel);
+  device = new DisplayDevice(hardware);
+  device->message = display.message;  // keep showing the channel for a moment
   init_channel(channel);
 }
 

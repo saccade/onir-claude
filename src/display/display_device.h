@@ -16,6 +16,10 @@ public:
 
   void refresh();
   void blank();
+  void clear() {
+    message.clear();
+    message.point = UNSET;
+  }
 
   Message message;
 
