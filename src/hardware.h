@@ -5,12 +5,12 @@ using s_small = signed char;
 
 #define UNSET -1
 
-inline bool const is_unset(const int& value) {
+inline bool is_unset(const int& value) {
   return value == UNSET;
 }
 
 inline void unset(int& value) {
-  return value = UNSET;
+  value = UNSET;
 }
 
 const extern int min_channel;
@@ -71,10 +71,15 @@ enum class Function : u_small {
 
 };
 
-inline Function& operator++(Function& fn) {
-  Function ret = fn;
+inline Function& operator++(Function& fn) {       // ++fn
   fn = (Function)((int)fn + 1);
-  return ret;
+  return fn;
+}
+
+inline Function operator++(Function& fn, int) {   // fn++
+  Function was = fn;
+  ++fn;
+  return was;
 }
 
 inline bool dys(Function& fn) {
@@ -95,11 +100,11 @@ extern const int hardware_size;
 int dispatch(const Hardware& hardware, Function fn);
 int dispatch(const Hardware& hardware, Function fn, int mode);
 
-inline bool const is_unset(const Hardware& hardware, Function fn) {
+inline bool is_unset(const Hardware& hardware, Function fn) {
   return is_unset(dispatch(hardware,fn));
 }
 
-inline bool const is_set(const Hardware& hardware, Function fn) {
+inline bool is_set(const Hardware& hardware, Function fn) {
   return not is_unset(dispatch(hardware,fn));
 }
 

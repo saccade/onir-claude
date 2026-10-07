@@ -47,7 +47,8 @@ void uno_audio(Hardware hardware) {
   assign(hardware, Fn::data, 9);
   assign(hardware, Fn::switch_, 10);
 
-  Hardware local {hardware};
+  Hardware local;  // just the power pins
+  clear(local);
   assign(local, Fn::ground, 12);
   power(local);
 
@@ -71,7 +72,8 @@ void uno_car(Hardware hardware) {
   assign(hardware, Fn::vcc, 6);
   assign(hardware, Fn::ground, 7);
 
-  Hardware local {hardware};
+  Hardware local;  // just the power pins
+  clear(local);
   assign(local, Fn::vcc, 6);
   assign(local, Fn::ground, 7);
   power(local);

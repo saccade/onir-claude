@@ -18,7 +18,7 @@ int assign(Hardware hardware, Function fn, int pin, int mode) {
 }
 
 void clear(Hardware hardware) {
-  for (int fn = (int)Function::none + 1; fn < (int)Function::count - 1; fn++) {
+  for (int fn = (int)Function::none + 1; fn < (int)Function::count; fn++) {
     assign(hardware, (Function)fn, UNSET); // it's rude to yell at the modem
   }
 }
