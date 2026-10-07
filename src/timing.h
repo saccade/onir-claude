@@ -14,7 +14,7 @@ struct Rhythm {
   long now = UNSET;
 
   // past
-  long last = UNSET;
+  long last = 0;       // we last went at boot, as far as anyone knows
   int missed = 0;
 
   // id
@@ -47,18 +47,11 @@ inline bool on_beat(const Rhythm& rhythm) {
   return entrance(rhythm) == beat;
 }
 
-inline bool fresh(const Rhythm& rhythm) {
-  return rhythm.last == UNSET;
-}
-
 inline bool steady(const Rhythm& rhythm) {
   return rhythm.missed <= rhythm.calls;
 }
 
 inline unsigned long since(const Rhythm& rhythm) {
-  if (fresh(rhythm)) {
-    return rhythm.now;
-  }
   return (unsigned long)rhythm.now - (unsigned long)rhythm.last;  // safe across rollover
 }
 
@@ -67,7 +60,7 @@ inline unsigned long wait(const Rhythm& rhythm) {
 }
 
 inline bool on_cue(const Rhythm& rhythm) {
-  return fresh(rhythm) or since(rhythm) >= wait(rhythm);
+  return since(rhythm) >= wait(rhythm);
 }
 
 inline bool late(const Rhythm& rhythm) {  // slept through our entrance? come in anyway.
