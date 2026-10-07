@@ -58,30 +58,30 @@ bool DialDevice::switch_pressed() const {
   return not digitalRead(dispatch(hardware, switch_fn));
 }
 
-// one quarter-step between two spots: +1 the turn-up way (clock leads),
-// -1 the other way, 0 for standing still or a jump we can't read.
-// a chattering contact flips back and forth, and its quarter-steps cancel.
-static int nudge(int from, int to) {
-  static const s_small steps[16] = {
-  //  to: 00  01  10  11
-          0, -1,  1,  0,   // from 00
-          1,  0,  0, -1,   // from 01
-         -1,  0,  0,  1,   // from 10
-          0,  1, -1,  0,   // from 11
-  };
-  return steps[from << 2 | to];
+// where the shaft sits: 0 in the detent, then 1, 2, 3 turning up.
+static int quarter(bool clock, bool data) {
+  if (clock and data) return 0;  // in the detent
+  if (data) return 1;            // clock let go first
+  if (clock) return 3;           // data let go first
+  return 2;                      // both let go
+}
+
+// quarters from one spot to the next: up 1, down -1, still or lost 0.
+static int moved(int from, int to) {
+  int step = (to - from + 4) % 4;
+  if (step == 1) return 1;
+  if (step == 3) return -1;
+  return 0;
 }
 
 int DialDevice::turned() {
   int was = spot;
-  spot = clock_pin() << 1 | data_pin();
-  travel += nudge(was, spot);
+  spot = quarter(clock_pin(), data_pin());
+  travel += moved(was, spot);
 
-  if (spot != rest) {
-    return 0;
-  }
+  if (spot != 0) return 0;  // flip only once it falls in
   int notch = 0;
-  if (travel > 1) notch = 1;     // most of the way round counts
+  if (travel > 1) notch = 1;
   if (travel < -1) notch = -1;
   travel = 0;
   return notch;
@@ -110,9 +110,9 @@ void DialDevice::feel() {
   bool pressed = held();
   int step = turned();
   if (pressed) {
-    moved_down += step;
+    notches_down += step;
   } else {
-    moved += step;
+    notches += step;
   }
 }
 
@@ -120,10 +120,10 @@ void DialDevice::take(Reading& reading) {
   noInterrupts();
   feel();  // catch up on anything no interrupt told us about
   Reading next = reading;
-  next.count += moved;
-  next.down_count += moved_down;
+  next.count += notches;
+  next.down_count += notches_down;
   next.button = down;
-  moved = moved_down = 0;
+  notches = notches_down = 0;
   interrupts();
 
   hand_over(reading, next);
