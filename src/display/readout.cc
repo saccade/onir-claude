@@ -35,8 +35,8 @@ void Readout::refresh() {
   display->refresh();
 }
 
-void Readout::report(Instruction* instruction) {
-  if (not instruction) return;
+void Readout::report(Instruction* todo) {
+  if (not todo) return;
 
-  instruction = instruction;
+  instruction = todo;
 }
