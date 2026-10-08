@@ -25,7 +25,7 @@ int Display::call(Change& change) {
   if (change.channel < min_channel) return 0;
   Wire.beginTransmission(change.channel);
   Wire.write(change.buffer, change.to_write);
-  return Wire.endTransmission() == 0;  // 0: the device took it
+  return Wire.endTransmission() == 0;  // 0 = got it. (silence means success)
 }
 
 int Display::call() {
