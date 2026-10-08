@@ -18,6 +18,7 @@ void Control::init() {
       todo.channel = number(channel);
       todo.command = Code::modify;
       todo.cue = Cue::drive;
+      todo.reading.count = UNSET;  // so the first update says hello, before anyone turns a dial
     }
   }
 }
@@ -95,6 +96,9 @@ bool Control::debrief_driver() {
     }
   }
 
+  if (empty(todo)) {
+    return true;          // nothing to report yet.
+  }
   const bool saved = update_panel(todo, panel);
   clear_device(channel);
   return saved and completed(todo);
