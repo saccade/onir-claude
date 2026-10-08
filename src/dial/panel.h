@@ -35,7 +35,7 @@ public:
   Link*& left();
   Link*& right();
 
-  operator bool() const {
+  operator bool() {
     return left()->dial and right()->dial;
   }
 
