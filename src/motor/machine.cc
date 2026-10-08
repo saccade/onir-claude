@@ -93,16 +93,16 @@ static Code control(Joint* joint, Motion motion) {
   return Code::perform;
 }
 
-static void Machine::answer(Function* answer, Function query, Function update) {
+void Machine::answer(Function* answer, Function query, Function update) {
   if (*answer == Function::none or update == query)
     *answer = update;  // query motion or first activated
 }
 
-static Code Machine::assign(const Motion* motion) {
+Code Machine::assign(const Motion* motion) {
   return motion ? assign(*motion) : Code::reject;
 }
 
-static Code Machine::assign(const Motion& motion) {
+Code Machine::assign(const Motion& motion) {
   return control(joints[motion.motor], motion);
 }
 
