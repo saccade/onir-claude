@@ -6,9 +6,6 @@ const extern int PULSE_NEUTRAL;
 const extern int PULSE_MAX;
 const extern int PULSE_MIN;
 
-// converts motor pitch (signed 8 bit integer) into servo pulse in usec (16 bit)
-static int servo_pulse(s_small pitch);
-
 long end_millis(long duration);
 
 enum class Target : u_small {
@@ -37,10 +34,6 @@ struct Joint {
   Trimmer* trimmer = 0;
   Code drive(Instruction&);
 };
-
-static bool stop_seek(Joint* joint);
-static bool stop_spin(Joint* joint);
-static bool hold(Joint* joint);
 
 class Machine {
 public:

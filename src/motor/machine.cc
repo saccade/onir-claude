@@ -9,6 +9,7 @@
 
 const int PULSE_NEUTRAL = 1500;
 
+// converts motor pitch (signed 8 bit integer) into servo pulse in usec (16 bit)
 // TODO: add custom per-servo trim (data file?)
 static int servo_pulse(s_small pitch) {
   // // bit shift by 7 ==> divide by 2^7.
