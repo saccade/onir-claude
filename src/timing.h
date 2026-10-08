@@ -9,6 +9,8 @@ struct Change {
   int to_write = 0;
 };
 
+// when to call a device: wait for your cue, come in on your beat.
+// five beats a measure, and every device has its entrance.
 struct Rhythm {
   // present
   long now = UNSET;
