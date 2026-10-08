@@ -1,6 +1,7 @@
 #include "rest.h"
 
 #include "Arduino.h"
+#include <avr/wdt.h>
 
 static const unsigned long hour = 60UL * 60 * 1000;
 static const unsigned long weary = 160 * hour;       // start over once it's quiet
@@ -10,8 +11,12 @@ static const unsigned long notice = 5000;            // how long "boot" shows
 
 static unsigned long stirred = 0;  // when something last happened
 
-void (*ResetSystem)(void);  // calling it jumps to 0, and the program starts over.
-                            // (the reset pin causes upload problems.)
+// the chip's watchdog restarts it, same as the reset button.
+// (the reset pin causes upload problems.)
+void ResetSystem() {
+  wdt_enable(WDTO_15MS);  // bite in 15 ms
+  while (true) {}         // and wait for it
+}
 
 void stir() {
   stirred = millis();
