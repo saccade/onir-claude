@@ -11,7 +11,7 @@ class Onir {
 public:
   Onir(int* channels, int count, const Hardware& hardware = no_hardware);
 
-  void Onir::display(char* message);
+  void display(char* message);
   void update();
 
   int now();
