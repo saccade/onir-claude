@@ -38,8 +38,6 @@ struct Joint {
   Code drive(Instruction&);
 };
 
-static Code control(Joint* joint, Motion motion);
-
 static bool stop_seek(Joint* joint);
 static bool stop_spin(Joint* joint);
 static bool hold(Joint* joint);
