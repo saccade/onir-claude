@@ -15,6 +15,7 @@ void setup() {
   Wire.begin();  // client mode
   control = new Control(hardware);
   memcheck();
+  delay(100);  // give the car board a moment to pick up the phone before we say hello
 }
 
 void loop() {
