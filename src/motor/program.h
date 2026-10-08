@@ -22,12 +22,14 @@ using Execute = int (*)(Program& program, Resource<T>& resource);
 template <typename T>
 static int follow(Rhythm& rhythm, Execute<T> execute, Program& program, Resource<T>& resource) {
   keep(rhythm);
-  if (not go(rhythm)) {
-    return 0;
-  }
-  rhythm.last = rhythm.now;
+  if (go(rhythm)) {
+    rhythm.last = rhythm.now;
 
-  int result = execute(program, resource);
-  tally(rhythm, result);
-  return result;
+    int result = execute(program, resource);
+    tally(rhythm, result);
+
+    return result;
+  }
+
+  return 0;
 }

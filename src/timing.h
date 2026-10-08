@@ -84,24 +84,27 @@ using Call = int (*)(Change& change);
 
 inline int follow(Rhythm& rhythm, Call call, Change& change)  {
   keep(rhythm);
-  if (not go(rhythm)) {
-    return 0;
-  }
-  rhythm.last = rhythm.now;
+  if (go(rhythm)) {
+    rhythm.last = rhythm.now;
 
-  int response = call(change);
-  tally(rhythm, response > 0);
-  return response;
+    int response = call(change);
+    tally(rhythm, response > 0);
+
+    return response;
+  }
+  return 0;
 }
 
 inline int follow(Rhythm& rhythm, Move move) {
   keep(rhythm);
-  if (not go(rhythm)) {
-    return 0;
-  }
-  rhythm.last = rhythm.now;
+  if (go(rhythm)) {
+    rhythm.last = rhythm.now;
 
-  int result = move();
-  tally(rhythm, result);
-  return result;
+    int result = move();
+    tally(rhythm, result);
+
+    return result;
+  }
+
+  return 0;
 }
