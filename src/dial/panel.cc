@@ -16,12 +16,12 @@ Link::Link(Link* link ) {
 Panel::Panel(const Hardware& hardware) {
   for (Function fn = Function::motor_main; fn < Function::motor_end; fn++) {
     if (is_set(hardware, fn)) {
-      Serial.println((int)fn);
+      if (explain) Serial.println((int)fn);
       Link*& link = operator[](fn);
       link = new Link(hardware);
       link->instruction.cue = Cue::drive;
       link->instruction.motion.motor = fn;
-      print_instruction(link->instruction);
+      if (explain) print_instruction(link->instruction);
     }
   }
 }

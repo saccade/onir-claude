@@ -20,12 +20,12 @@ Code Trimmer::execute(Instruction& todo) {
 
   if (todo.direction == Cue::invert) {
     invert = true;
-    Serial.println("execute: invert");
+    if (explain) Serial.println("execute: invert");
 
     return sign(todo, Code::modify);
   } else if (todo.direction == Cue::revert) {
     invert = false;
-    Serial.println("execute: revert");
+    if (explain) Serial.println("execute: revert");
     return sign(todo, Code::modify);
   }
 
@@ -50,7 +50,7 @@ bool Trimmer::read_dial() {
 }
 
 bool Trimmer::pitch_down() {
-  Serial.println("Trimmer::pitch_down");
+  if (explain) Serial.println("Trimmer::pitch_down");
   if (motion->pitch <= (-1 << 7) + gain) {  // -127
     return false;
   }
@@ -59,7 +59,7 @@ bool Trimmer::pitch_down() {
 }
 
 bool Trimmer::pitch_up() {
-  Serial.println("Trimmer::pitch_up");
+  if (explain) Serial.println("Trimmer::pitch_up");
   if (motion->pitch >= (1 << 7) - gain) {  // 127
     return false;
   }

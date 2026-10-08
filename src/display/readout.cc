@@ -9,15 +9,7 @@ Readout::Readout(Instruction* instruction, Display* display) :
 Readout::Readout(Instruction* instruction, const Hardware& hardware) :
   instruction(instruction), display(new Display(hardware)) { }
 
-// remove
-// remove
-// remove
-// remove
 #include "log.h"
-// remove
-// remove
-// remove
-// remove
 
 void Readout::refresh() {
   if (not display) return;
@@ -26,7 +18,7 @@ void Readout::refresh() {
     display->put_str("null");
   } else if (instruction->motion != prior) {
     prior = instruction->motion;
-    print_instruction(*instruction);
+    if (explain) print_instruction(*instruction);
     display->put(hex_digit((int)(prior.motor) % 16), 0);
     if (prior.pitch < 0) display->put('-', 1);
     display->put(hex_digit(absv(prior.pitch) / 16), 2);

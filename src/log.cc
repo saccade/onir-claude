@@ -8,6 +8,7 @@ int wink() { return millis() / 100; }  // a blink is 1/5 s. a wink is half a bli
 
 // int log_winks = 600;  // give me a minute to think.
 int log_winks = 10; // I need a second.
+bool explain = true;
 
 void log(const Instruction& s) {
   static long log_time_winks = -log_winks;  // persists across calls

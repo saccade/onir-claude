@@ -5,8 +5,6 @@
 #include "display/readout.h"
 #include "log.h"
 
-const static bool control_log = true;
-
 void Control::init() {
   for (Function fn = Function::motor_main; fn < Function::motor_end; fn++) {
     Link* link = panel[fn];
@@ -51,7 +49,7 @@ static int read_instruction(Channel channel, Instruction* buffer) {
   Wire.requestFrom(number(channel), sizeof(Instruction));
   if (Wire.available() == sizeof(Instruction)) {
     Wire.readBytes((char*)buffer, sizeof(Instruction));
-    if (control_log) {
+    if (explain) {
       print_instruction(*buffer);
     }
     return sizeof(Instruction);

@@ -17,4 +17,5 @@ class Unit;
 void log_io(Unit* unit);
 
 extern int log_winks;
+extern bool explain;  // say each step out loud (slow); false: run smooth and silent
 int memcheck();

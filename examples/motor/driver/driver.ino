@@ -23,6 +23,7 @@ void send_outcome() {
 
 void setup() {
   Serial.begin(9600);
+  explain = true;  // say each step out loud; false runs smooth and silent
   uno_driver_test(hardware);
   driver = new Driver(hardware);
   readout = new Readout(&instruction, hardware);
@@ -39,7 +40,7 @@ void setup() {
 void loop() {
   if (instruction) {
     driver->follow(instruction);
-    print_instruction(instruction);
+    if (explain) print_instruction(instruction);
   } else {
     driver->drive();
   }

@@ -20,12 +20,13 @@ void update_side(Dial* dial, Instruction& instruction) {
     instruction.command = Code::perform;
     instruction.respond = Code::none;
     driver->follow(instruction);
-    print_instruction(instruction);
+    if (explain) print_instruction(instruction);
   }
 }
 
 void setup() {
   Serial.begin(9600);
+  explain = true;  // say each step out loud; false runs smooth and silent
   uno_car(hardware);
   driver = new Driver(hardware);
   dial_l = new Dial(hardware);

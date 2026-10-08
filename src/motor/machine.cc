@@ -4,6 +4,7 @@
 #include "Arduino.h"
 #include "Servo.h"
 #include "rest.h"
+#include "log.h"
 
 #define LOG_SERVO_CHANGE false
 
@@ -63,8 +64,10 @@ Joint* Machine::engage(Function function, Target target, s_small pitch) {
 void Machine::engage_hardware(Target target) {
   for (Function motor = Function::motor_main; motor < Function::motor_end; motor++) {
     if (dispatch(hardware, motor) != UNSET) {
-      Serial.print("engage motor ");
-      Serial.println((int)motor);
+      if (explain) {
+        Serial.print("engage motor ");
+        Serial.println((int)motor);
+      }
       engage(motor, target, 0);
     }
   }
