@@ -60,8 +60,12 @@ inline bool on_cue(const Rhythm& rhythm) {
   return since(rhythm) >= wait(rhythm);
 }
 
+inline bool late(const Rhythm& rhythm) {  // a whole measure past our cue? come in anyway.
+  return since(rhythm) >= wait(rhythm) + rhythm.beats;
+}
+
 inline bool go(const Rhythm& rhythm) {
-  return on_cue(rhythm) and on_beat(rhythm);
+  return on_cue(rhythm) and (on_beat(rhythm) or late(rhythm));
 }
 
 inline void tally(Rhythm& rhythm, bool hit) {
