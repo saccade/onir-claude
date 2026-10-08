@@ -45,10 +45,11 @@ private:
       DDDDD   PP
   */
 
-  const unsigned ms_per_digit = 1;
-  int position = UNSET;          // the digit lit now
+  const int ms_per_digit = 1;
+  int position = 0;              // the digit lit now
   unsigned long shown_at = 0;    // when it lit
 
+  void light(int digit);  // just this one, with its shape
   void set_fn_pin(Function fn, bool val);
 
   // TODO: rename to fn_high? fn_active? (anode/cathode aware)

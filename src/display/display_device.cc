@@ -19,12 +19,10 @@ DisplayDevice::DisplayDevice(const Hardware& hardware) : hardware(hardware) {
 }
 
 // segments by name, as drawn in display_device.h.
-namespace {
-enum : u_small { a = 1, b = 2, c = 4, d = 8, e = 16, f = 32, g = 64 };
-}
+enum { a = 1, b = 2, c = 4, d = 8, e = 16, f = 32, g = 64 };
 
 // what each character looks like; letters in calligraphic order.
-static u_small glyph(char ch) {
+int glyph(char ch) {
   if (ch >= 'A' and ch <= 'Z') ch += 'a' - 'A';  // people will use capitals; do what they mean.
   if (ch == '0') return a | b | c | d | e | f;
   if (ch == '1') return b | c;
@@ -102,33 +100,37 @@ void DisplayDevice::set_point_pin(bool val) {
   set_fn_pin(Fn::dd_p, val);
 }
 
-// light the next digit, once the last has had its millisecond.
-// taking turns, no digit is skipped however slow the loop.
-void DisplayDevice::refresh() {
-  unsigned long now = millis();
-  if (position != UNSET and now - shown_at < ms_per_digit) return;
-  shown_at = now;
-  position = (position + 1) % 4;
-
-  if (spent()) {  // say goodbye
-    message.chars[0] = 'b';
-    message.chars[1] = 'o';
-    message.chars[2] = 'o';
-    message.chars[3] = 't';
-    message.point = UNSET;
+void say(Message& message, const char* word) {  // four letters, no point
+  for (int i = 0; i < 4; i++) {
+    message.chars[i] = word[i];
   }
-  if (showing(message)) stir();
-  doze();
+  message.point = UNSET;
+}
 
+// each digit gets its millisecond, then it's the next one's turn.
+void DisplayDevice::refresh() {
+  if (millis() - shown_at >= ms_per_digit) {
+    shown_at = millis();
+    position = (position + 1) % 4;
+
+    if (spent()) say(message, "boot");  // say goodbye
+    if (showing(message)) stir();
+    doze();
+
+    light(position);
+  }
+}
+
+void DisplayDevice::light(int digit) {
   blank();
-  u_small shape = glyph(message.chars[position]);
+  int shape = glyph(message.chars[digit]);
   for (int i = 0; i < 7; i++) {
     if (shape & (1 << i)) {
       pin_high(segments[i]);
     }
   }
-  if (message.point == position) {
+  if (message.point == digit) {
     set_point_pin(HIGH);
   }
-  pin_low(positions[position]);
+  pin_low(positions[digit]);
 }
