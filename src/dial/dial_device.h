@@ -13,7 +13,7 @@ public:
 
 private:
   // policy
-  unsigned settle = 5; // ms the switch must hold still before we believe it
+  int settle = 5;      // ms the switch must hold still before we believe it
 
   int spot = 0;        // quarter the shaft sits in; 0 is the detent
   int travel = 0;      // quarters turned since it last sat in a detent
