@@ -56,7 +56,7 @@ public:
   void engage_hardware(Target);
 
   void release(Function joint);
-  Function assign(const Operation&);
+  Function assign(Operation&);
   Code assign(const Motion*);
   Code assign(const Motion&);
 

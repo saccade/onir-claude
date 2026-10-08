@@ -106,7 +106,7 @@ Code Machine::assign(const Motion& motion) {
   return control(joints[motion.motor], motion);
 }
 
-Function Machine::assign(const Operation& operation) {
+Function Machine::assign(Operation& operation) {
   if (operation.direction != Cue::query) operation.extend();
   Function query = operation.motion.motor;
   Function response {};
