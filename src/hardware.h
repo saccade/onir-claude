@@ -87,6 +87,7 @@ inline bool is_motor(Function& fn) {
   return (i >= (int)Function::motor_main and i <=(int)Function::motor_end);
 }
 
+// assign functions to pins.
 using Hardware = int[(int)Function::count];
 extern const Hardware no_hardware;
 extern const int hardware_size;
