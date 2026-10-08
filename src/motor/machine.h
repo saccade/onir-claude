@@ -63,20 +63,6 @@ public:
 
 private:
 
-  static void answer(Function* answer, Function query, Function update);
-
-  static int pulse_delta(const Joint& joint) {
-    int target_delta = joint.target_usec - joint.pulse_usec;
-    if (not target_delta) return 0;
-    int sign = (target_delta > 0) ? 1 : -1;
-
-    if (sign * target_delta <= joint.max_delta) {
-      return target_delta;
-      } else {
-      return sign * joint.max_delta;
-    }
-  }
-
   Cue active = Cue::stop;
 
   const Hardware& hardware;

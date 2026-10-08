@@ -36,7 +36,7 @@ void Control::address(Channel channel) {
   channel = channel;
 }
 
-void Control::clear_device(Channel channel) {
+static void clear_device(Channel channel) {
   const static Instruction blank { };
   Wire.beginTransmission(number(channel));
   Wire.write((char*)&blank, sizeof(Instruction));
@@ -44,7 +44,7 @@ void Control::clear_device(Channel channel) {
 }
 
 // num bytes if response; false for missing data or bad response.
-int Control::read_instruction(Channel channel, Instruction* buffer) {
+static int read_instruction(Channel channel, Instruction* buffer) {
   if (not buffer) return 0;
 
   Wire.requestFrom(number(channel), sizeof(Instruction));
@@ -71,7 +71,7 @@ int Control::read_instruction(Channel channel, Instruction* buffer) {
   }
 }
 
-bool Control::update_panel(const Instruction& incoming, Panel& panel) {
+static bool update_panel(const Instruction& incoming, Panel& panel) {
   Link* link = panel[incoming.motion.motor];
   if (not link) return false;
   link->instruction = incoming;

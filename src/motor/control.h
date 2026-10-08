@@ -25,9 +25,6 @@ private:
 
   bool update_link(Link*);
 
-  static bool update_panel(const Instruction& incoming, Panel& panel);
-  static void clear_device(Channel);
-  static int read_instruction(Channel, Instruction* buffer);
   Panel panel { };
   Readout* readout { };
 };
