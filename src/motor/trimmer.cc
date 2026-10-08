@@ -3,7 +3,7 @@
 
 #include "Arduino.h"
 
-Trimmer::Trimmer(const Reading& reading, Motion* motion, bool invert = false) :
+Trimmer::Trimmer(const Reading& reading, Motion* motion, bool invert) :
   reading(reading), prior(reading), motion(motion), invert(invert) { }
 
 s_small Trimmer::pitch() {
