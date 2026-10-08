@@ -39,7 +39,7 @@ void clear() {
 }
 
 void update_display(int message_size) {
-  Wire.readBytes((byte*)&(device->message), min(message_size, (int)sizeof(Message)));
+  Wire.readBytes((byte*)&(device->message), message_size);
   recieved = true;
 }
 

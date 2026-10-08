@@ -9,7 +9,7 @@ DisplayDevice* display;
 Hardware hardware = { };
 
 void update_display(int message_size) {
-  Wire.readBytes((byte*)&display->message, min(message_size, (int)sizeof(Message)));
+  Wire.readBytes((byte*)&display->message, message_size);
 }
 
 void setup() {
