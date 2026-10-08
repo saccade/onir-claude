@@ -141,6 +141,4 @@ private:
   int index_;
   int baselines_[BANDS];
   bool fan_start_ = true;
-
-  const Hardware& hardware;
 };
