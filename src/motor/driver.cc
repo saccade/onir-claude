@@ -34,7 +34,7 @@ void Driver::init() {
   }
 }
 
-static Code Driver::drive(Machine& machine, Program& program) {
+Code Driver::drive(Machine& machine, Program& program) {
   Instruction& todo = program.instruction;
   if (not todo) {
     return sign(todo);                            // nothing to do.
