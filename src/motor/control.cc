@@ -80,6 +80,9 @@ bool Control::debrief_driver() {
   bool done = false;
   while (not done) {
     int response_size = read_instruction(channel, &todo);
+    if (response_size == 0) {
+      return false;       // nobody answered.
+    }
     if (response_size == sizeof(Instruction)) {
       if (empty(todo)) {
         done = true;      // nothing there.
