@@ -311,7 +311,7 @@ static Code idle(Instruction& todo) {
 }
 
 // return response value; let go of todo unaltered.
-static Code& release(Instruction& todo, Code response) {
+static Code release(Instruction& todo, Code response) {
   return response;
 }
 
