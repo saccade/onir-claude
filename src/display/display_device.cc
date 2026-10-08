@@ -22,7 +22,7 @@ DisplayDevice::DisplayDevice(const Hardware& hardware) : hardware(hardware) {
 enum { a = 1, b = 2, c = 4, d = 8, e = 16, f = 32, g = 64 };
 
 // what each character looks like; letters in calligraphic order.
-int glyph(char ch) {
+int shape(char ch) {
   if (ch >= 'A' and ch <= 'Z') ch += 'a' - 'A';  // people will use capitals; do what they mean.
   if (ch == '0') return a | b | c | d | e | f;
   if (ch == '1') return b | c;
@@ -69,7 +69,7 @@ int glyph(char ch) {
 
 bool showing(const Message& message) {
   for (int i = 0; i < 4; i++) {
-    if (glyph(message.chars[i])) return true;
+    if (shape(message.chars[i])) return true;
   }
   return message.point >= 0 and message.point < 4;
 }
@@ -123,9 +123,9 @@ void DisplayDevice::refresh() {
 
 void DisplayDevice::light(int digit) {
   blank();
-  int shape = glyph(message.chars[digit]);
+  int lit = shape(message.chars[digit]);
   for (int i = 0; i < 7; i++) {
-    if (shape & (1 << i)) {
+    if (lit & (1 << i)) {
       pin_high(segments[i]);
     }
   }

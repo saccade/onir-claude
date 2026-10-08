@@ -20,7 +20,7 @@ int wait = 1;  // ms each digit stays lit. try 100.
 enum { a = 1, b = 2, c = 4, d = 8, e = 16, f = 32, g = 64 };
 
 // what each character looks like; letters in calligraphic order.
-int glyph(char ch) {
+int shape(char ch) {
   if (ch >= 'A' and ch <= 'Z') ch += 'a' - 'A';
   if (ch == '0') return a | b | c | d | e | f;
   if (ch == '1') return b | c;
@@ -65,8 +65,8 @@ int glyph(char ch) {
 
 void show(int digit) {
   for (int pin : digit_pins) digitalWrite(pin, HIGH);  // all digits off
-  int shape = glyph(message[digit]);
-  for (int s = 0; s < 7; s++) digitalWrite(segment_pins[s], shape & (1 << s) ? HIGH : LOW);
+  int lit = shape(message[digit]);
+  for (int s = 0; s < 7; s++) digitalWrite(segment_pins[s], lit & (1 << s) ? HIGH : LOW);
   digitalWrite(digit_pins[digit], LOW);  // this one on
 }
 
