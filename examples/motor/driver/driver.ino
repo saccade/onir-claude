@@ -18,12 +18,7 @@ void take_instruction(int message_size) {
 }
 
 void send_outcome() {
-  if (empty(instruction)  // nothing yet
-      or instruction) {   // still working
-    Wire.write((const byte*)&instruction, sizeof(Loop));
-  } else {
-    Wire.write((const byte*)&instruction, sizeof(Instruction));
-  }
+  Wire.write((const byte*)&instruction, sizeof(Instruction));
 }
 
 void setup() {

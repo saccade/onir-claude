@@ -48,11 +48,7 @@ static int read_instruction(Channel channel, Instruction* buffer) {
   if (not buffer) return 0;
 
   Wire.requestFrom(number(channel), sizeof(Instruction));
-  if (Wire.available() == sizeof(Loop)) {
-    Wire.readBytes((char*)buffer, sizeof(Loop));  // prefix read
-    return sizeof(Loop);
-
-  } else if (Wire.available() == sizeof(Instruction)) {
+  if (Wire.available() == sizeof(Instruction)) {
     Wire.readBytes((char*)buffer, sizeof(Instruction));
     if (control_log) {
       print_instruction(*buffer);
@@ -84,19 +80,14 @@ bool Control::debrief_driver() {
   bool done = false;
   while (not done) {
     int response_size = read_instruction(channel, &todo);
-    if (response_size == sizeof(Instruction)) {  // got it.
-      done = true;
-    }
-
-    if (response_size == sizeof(Loop)) {
+    if (response_size == sizeof(Instruction)) {
       if (empty(todo)) {
         done = true;      // nothing there.
 
       } else if (todo) {  // still working
         delay(2);         // this should be quick -- try again.
       } else {
-        Serial.println("???");
-        return false;
+        done = true;      // got it.
       }
     }
   }
